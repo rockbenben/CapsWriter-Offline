@@ -73,7 +73,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh release create "${{ steps.meta.outputs.tag }}" release/*.zip \
-            --title "CapsWriter-Offline-Client ${{ steps.meta.outputs.tag }}" \
+            --title "${{ steps.meta.outputs.tag }}" \
             --notes "客户端便携包（不含模型，CPU 版）
           构建时间：${{ steps.meta.outputs.date }}
           提交：${{ steps.meta.outputs.sha }}"
