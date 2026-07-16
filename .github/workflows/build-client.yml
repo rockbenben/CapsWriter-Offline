@@ -1,0 +1,75 @@
+name: Build Client
+
+# 仅打包客户端（不含模型，约 100MB），构建完发布到 GitHub Release。
+# 仅手动触发（Actions → Build Client → Run workflow）。
+# 全部构建逻辑都在本工作流内完成，不改动仓库里的任何构建脚本。
+# 标签自动生成为 client-<日期>-<时分>（UTC），唯一不撞名；
+# 发布后 GitHub 的 /releases/latest 会自动指向最新一个版本包。
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write   # 创建 Release / tag 需要写权限
+
+jobs:
+  build-client:
+    runs-on: windows-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 安装 Python
+        uses: actions/setup-python@v5
+        with:
+          # 与项目依赖（numba/pyinstaller）兼容的版本，如构建失败可调整
+          python-version: '3.12'
+
+      - name: 安装客户端依赖
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-client.txt
+
+      - name: 清理旧产物
+        shell: bash
+        run: rm -rf build dist release
+
+      - name: PyInstaller 构建客户端
+        run: pyinstaller build-client.spec
+
+      - name: 打包为 zip（zip_release.py 自动排除模型）
+        run: python zip_release.py
+
+      - name: 校验产物（含 start_client.exe 与 core/）
+        shell: bash
+        run: |
+          python - <<'PY'
+          import glob, sys, zipfile
+          zips = sorted(glob.glob('release/CapsWriter-Offline-Client-*.zip'))
+          if not zips:
+              sys.exit('构建失败：release/ 下没有生成客户端 zip')
+          names = [n.replace('\\', '/') for n in zipfile.ZipFile(zips[-1]).namelist()]
+          has_exe = any(n.endswith('start_client.exe') for n in names)
+          has_core = any('/core/' in n for n in names)
+          if not (has_exe and has_core):
+              sys.exit(f'产物不完整：start_client.exe={has_exe}, core/={has_core}')
+          print(f'OK {zips[-1]}  files={len(names)}')
+          PY
+
+      - name: 计算标签与说明
+        id: meta
+        shell: bash
+        run: |
+          echo "tag=client-$(date -u +%Y%m%d-%H%M)"       >> "$GITHUB_OUTPUT"
+          echo "date=$(date -u '+%Y-%m-%d %H:%M') UTC"     >> "$GITHUB_OUTPUT"
+          echo "sha=${GITHUB_SHA::7}"                      >> "$GITHUB_OUTPUT"
+
+      - name: 发布版本 Release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${{ steps.meta.outputs.tag }}" release/*.zip \
+            --title "CapsWriter-Offline-Client ${{ steps.meta.outputs.tag }}" \
+            --notes "客户端便携包（不含模型，CPU 版）
+          构建时间：${{ steps.meta.outputs.date }}
+          提交：${{ steps.meta.outputs.sha }}"
