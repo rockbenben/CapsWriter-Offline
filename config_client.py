@@ -17,18 +17,25 @@ class ClientConfig:
     # 快捷键配置列表
     shortcuts = [
         {
+            'key': 'alt_gr',        # 监听右 Alt 键（pynput 里右 Alt 的名字是 alt_gr，不是 alt_r），当作录音键
+            'type': 'keyboard',     # 是键盘快捷键
+            'suppress': True,        # 阻塞：右 Alt 被完全吞掉，不再触发系统 Alt 热键/AltGr（专职录音键）
+            'hold_mode': False,      # 单击模式：点一下开始录音，再点一下停止（即"短按"用法）
+            'enabled': True         # 启用此快捷键
+        },
+        {
             'key': 'caps_lock',     # 监听大写锁定键
             'type': 'keyboard',     # 是键盘快捷键
             'suppress': True,      # 阻塞按键（短按会补发）
             'hold_mode': True,      # 长按模式
-            'enabled': True         # 启用此快捷键
+            'enabled': False        # 已禁用
         },
         {
             'key': 'x2',
             'type': 'mouse',
             'suppress': True,
             'hold_mode': True,
-            'enabled': True
+            'enabled': False
         },
     ]
 

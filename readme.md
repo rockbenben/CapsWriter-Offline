@@ -2,13 +2,19 @@
 
 ![demo](assets/demo.png)
 
-> **按住 CapsLock 说话，松开就上屏。就这么简单。**
+> **点一下右 Alt 说话，说完再点一下就上屏。就这么简单。**
 
 **CapsWriter-Offline** 是一个专为 Windows 打造的**完全离线**语音输入工具。
 
+> [!NOTE]
+> **关于本仓库**：这是基于 [HaujetZhao/CapsWriter-Offline](https://github.com/HaujetZhao/CapsWriter-Offline) 的**个人 fork，仅作个人使用记录**，不作为公开项目维护，请优先使用[上游原版](https://github.com/HaujetZhao/CapsWriter-Offline)——绝大部分功能、模型与文档都出自原作者之手。
+>
+> 本仓相对上游只有两处个人化改动：① 把录音键从 CapsLock 换成右 Alt（`alt_gr`，单击一下开始、再单击停止）；② 因为右 Alt 没有 CapsLock 那样的指示灯，补了一个录音时的屏幕悬浮胶囊（可在 `config_client.py` 里用 `show_recording_toast` 关闭）。上游有意不做屏幕录音提示、也不做流式预览，理由见其[常见问题](docs/常见问题.md#不会做的功能)——追求静默无感请用上游原版。
+
 ## ✨ 核心特性
 
--   **语音输入**：按住 `CapsLock键` 或 `鼠标侧键X2` 说话，松开即输入，超低延迟，默认去除末尾逗句号。支持对讲机模式和单击录音模式。
+-   **语音输入**：默认按一下 `右Alt` 开始说话、再按一下上屏（单击开关模式），超低延迟，默认去除末尾逗句号。也支持长按对讲机模式；`config_client.py` 里可启用 CapsLock、鼠标侧键 X2 等其它键。
+-   **录音提示**（本仓新增）：录音时屏幕中下方淡入深色胶囊（REC 红点 +「正在聆听」+ 跟随真实麦克风音量的声波条），转文字时变「正在转文字」，上屏后消失。因为改用了没有指示灯的右 Alt，用它补回 CapsLock 灯那种「一眼可见」。
 -   **文件转录**：音视频文件往客户端 exe 一丢，字幕 (`.srt`)、文本 (`.txt`)、时间戳 (`.json`) 统统都有。
 -   **数字 ITN**：自动将「十五六个」转为「15~16个」，支持各种复杂数字格式。
 -   **热词替换**：在 `hot.txt` 记下偏僻词，通过音素模糊匹配，相似度大于阈值则强制替换。
@@ -75,7 +81,7 @@ CapsWriter 的特别之处在于追求：
 2.  **下载解压**：下载 [Latest Release](https://github.com/HaujetZhao/CapsWriter-Offline/releases/latest) 里的软件本体，再到 [Models Release](https://github.com/HaujetZhao/CapsWriter-Offline/releases/tag/models) 下载模型压缩包，将模型解压，放入 `models` 文件夹中对应模型的文件夹里。
 3.  **启动服务**：双击 `start_server.exe`，**它会自动最小化到托盘菜单**。
 4.  **启动听写**：双击 `start_client.exe`，**它会自动最小化到托盘菜单**。
-5.  **开始录音**：按住 `CapsLock键` 或 `鼠标侧键X2` 就可以说话了！
+5.  **开始录音**：按一下 `右Alt` 开始说话，说完再按一下就上屏！（默认单击开关；想用长按、或换成 CapsLock、鼠标侧键 X2，都在 `config_client.py` 的 `shortcuts` 里改）
 
 
 ## ⚙️ 个性化配置
