@@ -14,6 +14,10 @@ permissions:
 jobs:
   build-client:
     runs-on: windows-latest
+    env:
+      # runner 上 Python stdout 默认 cp1252，zip_release.py 打印中文会 UnicodeEncodeError；
+      # 开启 UTF-8 模式让全程 python 用 UTF-8 输出/读写。
+      PYTHONUTF8: '1'
     steps:
       - name: 检出代码
         uses: actions/checkout@v4
