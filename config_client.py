@@ -21,6 +21,7 @@ class ClientConfig:
             'type': 'keyboard',     # 是键盘快捷键
             'suppress': True,        # 阻塞：右 Alt 被完全吞掉，不再触发系统 Alt 热键/AltGr（专职录音键）
             'hold_mode': False,      # 单击模式：点一下开始录音，再点一下停止（即"短按"用法）
+            'threshold': 0.5,       # 单击容错：按下后须在 threshold×0.8（=0.4s）内松开，这一下才算"点击"；按更久会被当成长按——开始那下会取消录音、停止那下会失效。只作用于本键，不影响下面的 Config.threshold
             'enabled': True         # 启用此快捷键
         },
         {
@@ -41,8 +42,8 @@ class ClientConfig:
 
     threshold    = 0.3          # 快捷键触发阈值（秒）
 
-    paste        = False        # 是否以写入剪切板然后模拟 Ctrl-V 粘贴的方式输出结果
-    restore_clip = True         # 模拟粘贴后是否恢复剪贴板
+    paste        = True         # 是否以写入剪切板然后模拟 Ctrl-V 粘贴的方式输出结果
+    restore_clip = False        # 模拟粘贴后是否恢复剪贴板（关闭：恢复过快会与目标程序读剪贴板抢跑，导致粘不上）
     paste_apps   = ['WeiXin.exe', 'Telegram.exe']  # 匹配时强制粘贴
 
     enter_apps   = [('happ.exe', 0.5), ('hexin.exe', 0.5)]  # (应用名, 延迟秒数) 输出完成后自动回车，如同花顺，输入股票名后，需要回车才能切换
