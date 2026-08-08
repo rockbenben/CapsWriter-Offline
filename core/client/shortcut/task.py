@@ -12,7 +12,9 @@ from threading import Event
 from typing import TYPE_CHECKING, Optional
 
 from . import logger
+from config_client import ClientConfig as Config
 from core.tools.my_status import Status
+from core.tools import system_mute
 from core.client.ui.recording_toast import RecordingToast
  
 if TYPE_CHECKING:
@@ -91,6 +93,10 @@ class ShortcutTask:
         # 更新录音状态
         self.state.start_recording(self.recording_start_time)
 
+        # 录音期间静音系统输出（getattr 兜底：部署侧旧 config_client.py 没有该项时默认关闭）
+        if getattr(Config, 'mute_while_recording', False):
+            system_mute.mute()
+
         # 打印动画：正在录音
         self._status.start()
         self._rec_toast.start()
@@ -110,6 +116,7 @@ class ShortcutTask:
         self.state.stop_recording()
         self._status.stop()
         self._rec_toast.stop()
+        system_mute.unmute()
 
         self.task.cancel()
         self.task = None
@@ -121,6 +128,7 @@ class ShortcutTask:
         self.is_recording = False
         self.state.stop_recording()
         self._status.stop()
+        system_mute.unmute()
         # 松键后胶囊不关闭，原地切换「转写中」；由 ResultProcessor/LLM 输出时关闭
         self._rec_toast.processing()
 

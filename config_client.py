@@ -48,6 +48,8 @@ class ClientConfig:
 
     enter_apps   = [('happ.exe', 0.5), ('hexin.exe', 0.5)]  # (应用名, 延迟秒数) 输出完成后自动回车，如同花顺，输入股票名后，需要回车才能切换
 
+    mute_while_recording = True  # 录音时静音系统输出，录完恢复（需 pycaw；系统本就静音时不碰）
+
     save_audio = True           # 是否保存录音文件
     audio_name_len = 20         # 将录音识别结果的前多少个字存储到录音文件名中，建议不要超过200
 
